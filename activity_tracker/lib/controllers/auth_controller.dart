@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-import '../screens/login_screen.dart';
-import '../screens/home_screen.dart';
 import 'activity_controller.dart';
 import 'profile_controller.dart';
 
@@ -19,7 +17,6 @@ class AuthController extends GetxController {
     try {
       isLoading.value = true;
       await _auth.signInWithEmailAndPassword(email: email, password: password);
-      Get.offAll(() => const HomeScreen());
     } on FirebaseAuthException catch (e) {
       Get.snackbar('Login Failed', e.message ?? 'Something went wrong');
     } finally {
@@ -45,7 +42,6 @@ class AuthController extends GetxController {
         'weight': 0.0,
         'stepsTarget': 10000,
       });
-      Get.offAll(() => const HomeScreen());
     } on FirebaseAuthException catch (e) {
       Get.snackbar('Register Failed', e.message ?? 'Something went wrong');
     } finally {
@@ -54,12 +50,9 @@ class AuthController extends GetxController {
   }
 
   Future<void> logout() async {
-    // Explicitly remove user-scoped controllers so the next person who
-    // logs in and get a fresh table to set data;
     Get.delete<ActivityController>(force: true);
     Get.delete<ProfileController>(force: true);
     await _auth.signOut();
-    Get.offAll(() => const LoginScreen());
   }
 
   String get userId => _auth.currentUser?.uid ?? '';
